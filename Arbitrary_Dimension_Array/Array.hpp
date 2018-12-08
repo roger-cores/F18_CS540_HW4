@@ -74,8 +74,21 @@ namespace cs540 {
         elements[i] = second.elements[i];
       }
     }
-    Array &operator=(const Array &second);
-    template <typename U> Array &operator=(const Array<U, D> &second);
+    Array &operator=(const Array &second) {
+      if(this == &second) return *this;
+      for(size_t i=0; i<D; i++) {
+        elements[i] = second.elements[i];
+      }
+    }
+    template <typename U> Array &operator=(const Array<U, D> &second) {
+      for(size_t i=0; i<D; i++) {
+        elements[i] = second.elements[i];
+      }
+    }
+    const T& operator[](size_t i) const {
+      if(i>=D) throw OutOfRange();
+      return elements[i];
+    }
   };
 
 }
