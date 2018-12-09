@@ -54,7 +54,6 @@ namespace cs540 {
       return array[i];
     }
 
-    //TODO FDM and LDM Iterators
     class FirstDimensionMajorIterator {
       Array<T, Ds...>* current_ptr;
       typename Array<T, Ds...>::FirstDimensionMajorIterator current_child_iterator;
@@ -71,7 +70,7 @@ namespace cs540 {
       FirstDimensionMajorIterator &operator++() {
         if(current_child_iterator == current_ptr->fmend()) { //child_iterator has reached its end, increment this iterator and reset child to fmbegin
           index++;
-          current_ptr += sizeof(Array<T, Ds...>);
+          current_ptr++;
           current_child_iterator = current_ptr->fmbegin();
         } else { //else child can be incremented
           ++current_child_iterator;
@@ -82,7 +81,7 @@ namespace cs540 {
         FirstDimensionMajorIterator copy(*this);
         if(current_child_iterator == current_ptr->fmend()) { //child_iterator has reached its end, increment this iterator and reset child to fmbegin
           index++;
-          current_ptr += sizeof(Array<T, Ds...>);
+          current_ptr++;
           current_child_iterator = current_ptr->fmbegin();
         } else { //else child can be incremented
           ++current_child_iterator;
@@ -105,11 +104,51 @@ namespace cs540 {
     } // Pointing at the first sub-array
 
     FirstDimensionMajorIterator fmend() {
-      return FirstDimensionMajorIterator(D, array + sizeof(Array<T, Ds...>) * D);
+      return FirstDimensionMajorIterator(D, array + D);
     }
 
 
-    
+    class LastDimensionMajorIterator {
+      Array<T, Ds...>* current_ptr;
+      typename Array<T, Ds...>::LastDimensionMajorIterator current_child_iterator;
+      size_t index;
+    public:
+      LastDimensionMajorIterator() : index(0), current_ptr(nullptr) {} //Default ctor
+      // Copy and assignment are implicit
+      LastDimensionMajorIterator(size_t index, Array<T, Ds...> *current_ptr) : index(index), current_ptr(current_ptr) {
+        current_child_iterator = current_ptr->fmbegin();
+      } //ctor with args inde and pointer
+      T &operator*() const {
+        return *current_child_iterator;
+      }
+      LastDimensionMajorIterator &operator++() {
+        //TODO LDM Iteration
+        return *this;
+      } // Preincrement
+      LastDimensionMajorIterator operator++(int) {
+        LastDimensionMajorIterator copy(*this);
+        //TODO LDM Iteration
+        return copy;
+      } // Postincrement
+
+
+      friend bool operator==(const LastDimensionMajorIterator &one, const LastDimensionMajorIterator &two) {
+        return one.current_ptr == two.current_ptr && one.index == two.index && one.current_child_iterator == two.current_child_iterator;
+      } //Equality checker. Free standing.
+      friend bool operator!=(const LastDimensionMajorIterator &one, const LastDimensionMajorIterator &two) {
+        return !(one == two);
+      } //Inequality checker. Free standing.
+
+    };
+
+
+    LastDimensionMajorIterator lmbegin() {
+      return LastDimensionMajorIterator(0, array);
+    } // Pointing at the first sub-array
+
+    LastDimensionMajorIterator lmend() {
+      return LastDimensionMajorIterator(D, array + D);
+    }
 
 
 
@@ -165,14 +204,14 @@ namespace cs540 {
       FirstDimensionMajorIterator &operator++() {
         index++;
         if(index>=D) current_ptr = nullptr;
-        else current_ptr += sizeof(T);
+        else current_ptr++;
         return *this;
       } // Preincrement
       FirstDimensionMajorIterator operator++(int) {
         FirstDimensionMajorIterator copy(*this);
         index++;
         if(index>=D) current_ptr = nullptr;
-        else current_ptr += sizeof(T);
+        else current_ptr++;
         return copy;
       } // Postincrement
       friend bool operator==(const FirstDimensionMajorIterator &one, const FirstDimensionMajorIterator &two) {
@@ -188,7 +227,7 @@ namespace cs540 {
     } // First position
 
     FirstDimensionMajorIterator fmend() {
-      return FirstDimensionMajorIterator(D, elements + sizeof(T)*D);
+      return FirstDimensionMajorIterator(D, elements + D);
     } // One past the last position
 
 
@@ -207,14 +246,14 @@ namespace cs540 {
       LastDimensionMajorIterator &operator++() {
         index++;
         if(index>=D) current_ptr = nullptr;
-        else current_ptr += sizeof(T);
+        else current_ptr++;
         return *this;
       } // Preincrement
       LastDimensionMajorIterator operator++(int) {
         LastDimensionMajorIterator copy(*this);
         index++;
         if(index>=D) current_ptr = nullptr;
-        else current_ptr += sizeof(T);
+        else current_ptr++;
         return copy;
       } // Postincrement
       friend bool operator==(const LastDimensionMajorIterator &one, const LastDimensionMajorIterator &two) {
@@ -230,7 +269,7 @@ namespace cs540 {
     } // First position
 
     LastDimensionMajorIterator lmend() {
-      return FirstDimensionMajorIterator(D, elements + sizeof(T)*D);
+      return FirstDimensionMajorIterator(D, elements + D);
     } // One past the last position
   };
 
