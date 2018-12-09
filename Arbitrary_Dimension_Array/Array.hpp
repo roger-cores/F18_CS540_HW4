@@ -18,6 +18,7 @@ namespace cs540 {
     // Recursively create array of type T, dimension Ds and size D
     Array<T, Ds...> array[D];
   public:
+    using ValueType = T;
     Array() {
       static_assert(D > 0, "Dimension must be greater than zero");
     }
@@ -53,6 +54,8 @@ namespace cs540 {
       return array[i];
     }
 
+    //TODO FDM and LDM Iterators
+
   };
 
   // Exactly one dimension
@@ -61,6 +64,7 @@ namespace cs540 {
   private:
     T elements[D];
   public:
+    using ValueType = T;
     Array() {
       static_assert(D>0, "Dimension should be greater than zero");
     }
@@ -89,6 +93,62 @@ namespace cs540 {
       if(i>=D) throw OutOfRange();
       return elements[i];
     }
+
+    class FirstDimensionMajorIterator {
+      T* current_ptr;
+      size_t index;
+
+    public:
+      FirstDimensionMajorIterator() : index(0), current_ptr(nullptr) {} //default ctor
+      T &operator*() const {
+        return *(current_ptr);
+      }
+      FirstDimensionMajorIterator &operator++() {
+        index++;
+        current_ptr += sizeof(T);
+      } // Preincrement
+      FirstDimensionMajorIterator operator++(int) {
+        FirstDimensionMajorIterator copy(*this);
+        index++;
+        current_ptr += sizeof(T);
+        return copy;
+      } // Postincrement
+      friend bool operator==(const FirstDimensionMajorIterator &one, const FirstDimensionMajorIterator &two) {
+        return one.current_ptr == two.current_ptr && one.index == two.index;
+      } //Equality checker. Free standing.
+      friend bool operator!=(const FirstDimensionMajorIterator &one, const FirstDimensionMajorIterator &two) {
+        return !(one == two);
+      } //Inequality checker. Free standing.
+    };
+
+
+
+    class LastDimensionMajorIterator {
+      T* current_ptr;
+      size_t index;
+
+    public:
+      LastDimensionMajorIterator() : index(0), current_ptr(nullptr) {} //default ctor
+      T &operator*() const {
+        return *(current_ptr);
+      }
+      LastDimensionMajorIterator &operator++() {
+        index++;
+        current_ptr += sizeof(T);
+      } // Preincrement
+      LastDimensionMajorIterator operator++(int) {
+        LastDimensionMajorIterator copy(*this);
+        index++;
+        current_ptr += sizeof(T);
+        return copy;
+      } // Postincrement
+      friend bool operator==(const LastDimensionMajorIterator &one, const LastDimensionMajorIterator &two) {
+        return one.current_ptr == two.current_ptr && one.index == two.index;
+      } //Equality checker. Free standing.
+      friend bool operator!=(const LastDimensionMajorIterator &one, const LastDimensionMajorIterator &two) {
+        return !(one == two);
+      } //Inequality checker. Free standing.
+    };
   };
 
 }
