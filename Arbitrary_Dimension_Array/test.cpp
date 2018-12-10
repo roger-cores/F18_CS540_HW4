@@ -52,4 +52,21 @@ int main() {
     assert((*it2) == ap[i++]);
   } while(++it2 != a2.fmend());
 
+  std::cout<<std::endl;
+
+  for(size_t j=0; j<5; j++) {
+    for(i=0; i<3; i++) {
+      std::cout<<a[i][j]<<std::endl;
+    }
+  }
+
+  std::cout<<std::endl;
+
+  auto it3=a2.lmbegin();
+  for(i=0;i<15;i++) {
+    std::cout<<*it3<<std::endl;
+    ++it3;
+  }
+  assert(it3==a2.lmend());
+
 }

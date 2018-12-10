@@ -108,30 +108,43 @@ namespace cs540 {
     }
 
     class LastDimensionMajorIterator {
-      Array<T, Ds...>* base_ptr;
       size_t index;
       typename Array<T, Ds...>::LastDimensionMajorIterator current_child_iterator;
     public:
-      LastDimensionMajorIterator() : base_ptr(nullptr), index(0) {} //Default ctor
+      Array<T, Ds...>* base_ptr;
+      LastDimensionMajorIterator() : index(0), base_ptr(nullptr) {} //Default ctor
       // Copy and assignment are implicit
-      LastDimensionMajorIterator(size_t index, Array<T, Ds...> *base_ptr) : base_ptr(base_ptr), index(index) {
-        current_child_iterator = base_ptr[index].lmbegin();
+      LastDimensionMajorIterator(size_t index, Array<T, Ds...> *base_ptr) : index(index), base_ptr(base_ptr) {
+        if(index==D) current_child_iterator = base_ptr[index].lmend();
+        else current_child_iterator = base_ptr[index].lmbegin();
       } //ctor with args inde and pointer
       T &operator*() const {
         return *current_child_iterator;
       }
+      void shift_ptr() {
+        current_child_iterator.base_ptr = base_ptr[index].array;
+        current_child_iterator.shift_ptr();
+      }
       bool increment() {
         if(index<D) ++index;
-        if(index==D) return true;
-        return false;
+        if(index==D) { //reached end, reset to zero, increment child
+          index=0;
+          shift_ptr();
+          if(current_child_iterator.increment()) {
+            return true;
+          } else return false;
+        } else {
+          shift_ptr();
+          return false;
+        }
       }
       LastDimensionMajorIterator &operator++() {
-        
+        increment();
         return *this;
       } // Preincrement
       LastDimensionMajorIterator operator++(int) {
         LastDimensionMajorIterator copy(*this);
-        //TODO LDM Iteration
+        increment();
         return copy;
       } // Postincrement
 
@@ -165,7 +178,7 @@ namespace cs540 {
   template <typename T, size_t D>
   class Array<T, D> {
   private:
-    T elements[D];
+    T array[D];
   public:
     template <typename U, size_t... Dims> friend class Array;
     using ValueType = T;
@@ -174,36 +187,36 @@ namespace cs540 {
     }
     Array(const Array &second) {
       for(size_t i=0; i<D; i++) {
-        elements[i] = second.elements[i];
+        array[i] = second.array[i];
       }
     }
     template <typename U> Array(const Array<U, D> &second) {
       for(size_t i=0; i<D; i++) {
-        elements[i] = second.elements[i];
+        array[i] = second.array[i];
       }
     }
     Array &operator=(const Array &second) {
       if(this == &second) return *this;
       for(size_t i=0; i<D; i++) {
-        elements[i] = second.elements[i];
+        array[i] = second.array[i];
       }
       return *this;
     }
     template <typename U> Array &operator=(const Array<U, D> &second) {
       for(size_t i=0; i<D; i++) {
-        elements[i] = second.elements[i];
+        array[i] = second.array[i];
       }
       return *this;
     }
 
     T& operator[](size_t i) {
       if(i>=D) throw OutOfRange();
-      return elements[i];
+      return array[i];
     }
 
     const T& operator[](size_t i) const {
       if(i>=D) throw OutOfRange();
-      return elements[i];
+      return array[i];
     }
 
     class FirstDimensionMajorIterator {
@@ -235,39 +248,39 @@ namespace cs540 {
     };
 
     FirstDimensionMajorIterator fmbegin() {
-      return FirstDimensionMajorIterator(0, elements);
+      return FirstDimensionMajorIterator(0, array);
     } // First position
 
     FirstDimensionMajorIterator fmend() {
-      return FirstDimensionMajorIterator(D, elements);
+      return FirstDimensionMajorIterator(D, array);
     } // One past the last position
 
 
     // 1D LastDimensionMajorIterator will work like any regular iterator
     class LastDimensionMajorIterator {
-      T* base_ptr;
       size_t index;
 
     public:
-      LastDimensionMajorIterator() : base_ptr(nullptr), index(0) {} //default ctor
+      T* base_ptr;
+      LastDimensionMajorIterator() : index(0), base_ptr(nullptr) {} //default ctor
       // Copy ctor and assignment are implicit
-      LastDimensionMajorIterator(size_t index, T* base_ptr) : base_ptr(base_ptr), index(index) {} //ctor with args index and pointer
+      LastDimensionMajorIterator(size_t index, T* base_ptr) : index(index), base_ptr(base_ptr){} //ctor with args index and pointer
       T &operator*() const {
         return base_ptr[index];
       }
-      // return true if reached end
-      bool increment() {
+      void shift_ptr() {}
+      bool increment() { //return true if at end
         if(index<D) ++index;
         if(index==D) return true;
-        return false;
+        else return false;
       }
       LastDimensionMajorIterator &operator++() {
-        ++index;
+        increment();
         return *this;
       } // Preincrement
       LastDimensionMajorIterator operator++(int) {
         LastDimensionMajorIterator copy(*this);
-        ++index;
+        increment();
         return copy;
       } // Postincrement
       friend bool operator==(const LastDimensionMajorIterator &one, const LastDimensionMajorIterator &two) {
@@ -279,11 +292,11 @@ namespace cs540 {
     };
 
     LastDimensionMajorIterator lmbegin() {
-      return LastDimensionMajorIterator(0, elements);
+      return LastDimensionMajorIterator(0, array);
     } // First position
 
     LastDimensionMajorIterator lmend() {
-      return LastDimensionMajorIterator(D, elements);
+      return LastDimensionMajorIterator(D, array);
     } // One past the last position
   };
 
