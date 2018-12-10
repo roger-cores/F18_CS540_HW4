@@ -80,8 +80,8 @@ namespace cs540 {
         return *this;
       } // Preincrement
       FirstDimensionMajorIterator operator++(int) {
+      FirstDimensionMajorIterator copy(*this);
         ++current_child_iterator;
-        FirstDimensionMajorIterator copy(*this);
         if(current_child_iterator == base_ptr[index].fmend()) { //child_iterator has reached its end, increment this iterator and reset child to fmbegin
           index++;
           current_child_iterator = base_ptr[index].fmbegin();
