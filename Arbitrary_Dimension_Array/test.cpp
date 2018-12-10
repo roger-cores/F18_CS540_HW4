@@ -34,9 +34,7 @@ int main() {
     for(int j=0; j<5; j++) {
       std::cout<<a2[i][j]<<std::endl;
     }
-    std::cout<<std::endl;
   }
-  std::cout<<std::endl;
 
   //Testing fdm
   //post incr
@@ -52,20 +50,21 @@ int main() {
     assert((*it2) == ap[i++]);
   } while(++it2 != a2.fmend());
 
-  std::cout<<std::endl;
 
+  int a3[15];
+  size_t k = 0;
   for(size_t j=0; j<5; j++) {
     for(i=0; i<3; i++) {
-      std::cout<<a[i][j]<<std::endl;
+      a3[k] = a[i][j];
+      ++k;
     }
   }
 
-  std::cout<<std::endl;
-
   auto it3=a2.lmbegin();
-  for(i=0;i<15;i++) {
-    std::cout<<*it3<<std::endl;
-    ++it3;
+  k=0;
+  for(;it3!=a2.lmend();++it3) {
+    assert(*it3==a3[k]);
+    ++k;
   }
   assert(it3==a2.lmend());
 

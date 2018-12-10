@@ -131,6 +131,7 @@ namespace cs540 {
           index=0;
           shift_ptr();
           if(current_child_iterator.increment()) {
+            index = D;
             return true;
           } else return false;
         } else {
