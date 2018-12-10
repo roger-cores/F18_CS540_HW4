@@ -9,6 +9,7 @@ run:
 	./test
 checkmem:
 	# Insert command to run the executable with valgrind
-
+	valgrind --tool=memcheck --leak-check=full ./test
 clean:
 	# Insert command to clean object files, executables
+	rm ./test
