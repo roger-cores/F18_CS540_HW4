@@ -503,6 +503,7 @@ int main() {
             int *ap = (int *) a;
             for (array_t::FirstDimensionMajorIterator it = a1.fmbegin(); it != a1.fmend(); ++it) {
                 int t = *it;
+                cout<<"t: "<<t<<" and ap[i++]:"<<ap[i]<<endl;
                 assert(t == ap[i++]);
             }
             // Make sure it actually did it.
