@@ -2,12 +2,13 @@ CPPFLAGS= -Wall -Wextra -pedantic -g
 
 all:
 	# Insert command to compile the code and generate executable
-
+	g++ -std=c++17 -fmax-errors=1 $(CPPFLAGS) Test_Interpolate.cpp -o test
 run:
 	# Insert command to run the executable
-
+	./test
 checkmem:
 	# Insert command to run the executable with valgrind
-
+	valgrind --tool=memcheck --leak-check=full ./test
 clean:
 	# Insert command to clean object files, executables
+	rm ./test
