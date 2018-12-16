@@ -1,14 +1,19 @@
-CPPFLAGS= -Wall -Wextra -pedantic -g
+CPPFLAGS= -Wall -Wextra -pedantic -g -std=c++17
 
-all:
-	# Insert command to compile the code and generate executable
-	g++ -std=c++17 -fmax-errors=1 $(CPPFLAGS) Test_Interpolate.cpp -o test
+all: interpolate_bin
+
+interpolate_bin: interpolate.o
+	g++ $(CPPFLAGS) interpolate.o -o interpolate_bin
+
+interpolate.o: Test_Interpolate.cpp Interpolate.hpp
+	g++ $(CPPFLAGS) -c Test_Interpolate.cpp -o interpolate.o
+
 run:
 	# Insert command to run the executable
-	./test
+	./interpolate_bin
 checkmem:
 	# Insert command to run the executable with valgrind
-	valgrind --tool=memcheck --leak-check=full ./test
+	valgrind --tool=memcheck --leak-check=full ./interpolate_bin
 clean:
 	# Insert command to clean object files, executables
-	rm ./test
+	rm ./interpolate_bin
